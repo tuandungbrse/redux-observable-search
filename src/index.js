@@ -1,17 +1,27 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { render } from 'react-dom'
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
+import { createEpicMiddleware } from 'redux-observable'
+import { Provider } from 'react-redux'
+import suggestionSlice from './suggestionSlice'
+import rootEpics from './suggestionEpic'
+import App from './App'
 
-ReactDOM.render(
-  <React.StrictMode>
+const epicMiddleware = createEpicMiddleware()
+
+const store = configureStore({
+  reducer: {
+    suggestions: suggestionSlice
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(epicMiddleware)
+})
+
+epicMiddleware.run(rootEpics)
+
+const Root = () => (
+  <Provider store={store}>
     <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+  </Provider>
+)
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+render(<Root />, document.getElementById('root'))

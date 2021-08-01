@@ -1,25 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import { useSelector } from 'react-redux'
+import useSearch from './useSearch'
 
 function App() {
+  const suggestions = useSelector((state) => state.suggestions.suggestions)
+  const [search, setSearch] = useSearch('')
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div id="search">
+        <label>
+          Enter keywords:
+          <input
+            name="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            onBlur={(event) => setSearch(event.target.value)}
+          />
+        </label>
+      </div>
+      {suggestions && suggestions.length ? (
+        <div id="suggestions">
+          {suggestions.map((e, i) => (
+            <p key={i}>{e}</p>
+          ))}
+        </div>
+      ) : null}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
